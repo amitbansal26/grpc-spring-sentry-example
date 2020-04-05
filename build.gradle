@@ -49,11 +49,13 @@ idea {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	compileOnly "io.grpc:grpc-all:${grpcVersion}"
 	implementation 'io.github.lognet:grpc-spring-boot-starter:3.5.3'
 
-	implementation 'org.projectlombok:lombok'
-	compileOnly "io.grpc:grpc-all:${grpcVersion}"
-	annotationProcessor 'org.projectlombok:lombok'
+	implementation("io.sentry:sentry-logback:1.7.30")
 
 	testImplementation("io.grpc:grpc-testing:1.28.1")
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
