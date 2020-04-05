@@ -1,0 +1,66 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.6.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'com.google.protobuf' version '0.8.12'
+	id 'java'
+	id 'idea'
+
+}
+
+group = 'com.something'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+def protoVersion = '3.11.4'
+def grpcVersion = '1.28.1'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+protobuf {
+	protoc {
+		artifact = "com.google.protobuf:protoc:${protoVersion}"
+	}
+	plugins {
+		grpc {
+			artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+		}
+	}
+	generateProtoTasks {
+		all()*.plugins {
+			grpc {}
+		}
+	}
+	generatedFilesBaseDir = "$projectDir/src/generated"
+}
+
+idea {
+	module {
+		sourceDirs += file("${projectDir}/src/generated/main/java")
+		sourceDirs += file("${projectDir}/src/generated/main/grpc")
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'io.github.lognet:grpc-spring-boot-starter:3.5.3'
+
+	implementation 'org.projectlombok:lombok'
+	compileOnly "io.grpc:grpc-all:${grpcVersion}"
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation("io.grpc:grpc-testing:1.28.1")
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
